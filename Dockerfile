@@ -13,6 +13,7 @@ COPY --from=build /app/build/libs/*.jar app.jar
 
 # Render uses PORT environment variable
 ENV PORT=8080
+ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
 
-ENTRYPOINT ["java", "-jar", "-Dserver.port=${PORT}", "app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dserver.port=${PORT}", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "app.jar"]

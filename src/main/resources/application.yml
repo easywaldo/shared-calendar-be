@@ -1,20 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:sqlite:./shared-calendar.db
-    driver-class-name: org.sqlite.JDBC
-  jpa:
-    database-platform: org.hibernate.community.dialect.SQLiteDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
 server:
   port: ${PORT:8099}
-
-# Turso 연동 정보 (향후 배포 시 사용)
-turso:
-  database-url: ${TURSO_DATABASE_URL:}
-  auth-token: ${TURSO_AUTH_TOKEN:}

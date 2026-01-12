@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:libsql:${TURSO_DATABASE_URL}?authToken=${TURSO_AUTH_TOKEN}
+    driver-class-name: org.nicepay.libsql.LibsqlDriver
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false

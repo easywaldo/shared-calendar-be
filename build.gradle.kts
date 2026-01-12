@@ -19,6 +19,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -28,8 +29,11 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    // SQLite JDBC Driver
+    // SQLite JDBC Driver (for local dev)
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+
+    // Turso libSQL JDBC Driver (for prod)
+    implementation("com.github.nicepay:libsql-jdbc:0.1.4")
 
     // Hibernate SQLite Dialect
     implementation("org.hibernate.orm:hibernate-community-dialects:6.4.2.Final")
