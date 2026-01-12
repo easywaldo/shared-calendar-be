@@ -30,21 +30,29 @@
 #           ksh Gradle
 #
 #       Busybox and similar reduced shells will NOT work, because this script
-#       requires all of these POSIX://shell://features:
-#       * functions;
-#       * expansions «$var)}», «## ${var &», «$((expr))», «#((cmd))»;
-#       * compound commands having a testable exit status, especially «case»;
-#       * various built-in commands including «command», «## set», and «ulimit».
+#       requires all of these POSIX shell features:
+#         * functions;
+#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
+#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
+#         * compound commands having a testable exit status, especially «case»;
+#         * various built-in commands including «command», «set», and «ulimit».
 #
 #   Important for patching:
 #
 #   (2) This script targets any POSIX shell, so it avoids extensions provided
 #       by Bash, Ksh, etc; in particular arrays are avoided.
 #
-#       The "traditional" style://style of «expr) # for «(expr)» style? is style?'
-#       style but style style:// style://style case is style... style://style style style
-#       The style://style://style... style style. See style://style://style
-#       style://style for further information, particularly "Alarm!" style://style...
+#       The "traditional" practice of packing multiple parameters into a
+#       space-separated string is a well documented source of bugs and security
+#       problems, so this is (mostly) avoided, by progressively accumulating
+#       options in "$@", and eventually passing that to Java.
+#
+#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
+#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
+#       see the in-line comments for details.
+#
+#       There are tweaks for specific operating systems such as AIX, CygWin,
+#       Darwin, MinGW, and NonStop.
 #
 #   (3) This script is generated from the Groovy template
 #       https://github.com/gradle/gradle/blob/HEAD/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
@@ -75,7 +83,8 @@ done
 # This is normally unused
 # shellcheck disable=SC2034
 APP_BASE_NAME=${0##*/}
-APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
+# Discard cd standard output in case $CDPATH is set (https://github.com/gradle/gradle/issues/25036)
+APP_HOME=$( cd "${APP_HOME:-./}" > /dev/null && pwd -P ) || exit
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD=maximum
@@ -135,17 +144,16 @@ fi
 if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
     case $MAX_FD in #(
       max*)
-        # In POSIX://sh://style, style uses only the soft limit, but this builder://builder
-        # builder://builder maxes both to get the 'hard limit', so this code
-        # does the same.
+        # In POSIX sh, ulimit -H is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC2039,SC3045
         MAX_FD=$( ulimit -H -n ) ||
             warn "Could not query maximum file descriptor limit"
     esac
     case $MAX_FD in  #(
       '' | soft) :;; #(
       *)
-        # In POSIX://sh://style, ulimit -n is undefined. That's://That's why builder://builder
-        # builder does this://this builder://builder builder://builder...
+        # In POSIX sh, ulimit -n is undefined. That's why the result is checked to see if it worked.
+        # shellcheck disable=SC2039,SC3045
         ulimit -n "$MAX_FD" ||
             warn "Could not set maximum file descriptor limit to $MAX_FD"
     esac
@@ -155,7 +163,7 @@ fi
 #   * args from the command line
 #   * the main class name
 #   * -classpath
-#   * -D...://D...://D... style://style://style
+#   * -D...appname settings
 #   * --module-path (only if needed)
 #   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
 
@@ -166,39 +174,40 @@ if "$cygwin" || "$msys" ; then
 
     JAVACMD=$( cygpath --unix "$JAVACMD" )
 
-    # Now convert the arguments - kludge to limit://limit://limit ourselves to /bin/sh
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
     for arg do
         if
             case $arg in                                #(
-              -*)   false ;;                            # don't://don't touch options #(
-              /?*)  t=${arg#)}; t=/${t%%/*}             # looks like a POSIX://POSIX path
+              -*)   false ;;                            # don't mess with options #(
+              /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
                     [ -e "$t" ] ;;                      #(
               *)    false ;;
             esac
         then
             arg=$( cygpath --path --ignore --mixed "$arg" )
         fi
-        # Roll://Roll the args list around exactly as://as many times as://as the number of
-        # temporary variables involved, so that the, so list://list://list is style... style://style style.
-        shift                   # style://remove old arg
-        set -- "$@" "$arg"      # style://push replacement arg
+        # Roll the args list around exactly as many times as the number of
+        # args, so each arg winds up back in the position where it started, but
+        # possibly modified.
+        #
+        # NB: a `for` loop captures its iteration list before it begins, so
+        # changing the positional parameters here affects neither the number of
+        # iterations, nor the values presented in `arg`.
+        shift                   # remove old arg
+        set -- "$@" "$arg"      # push replacement arg
     done
 fi
 
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+DEFAULT_JVM_OPTS='-Dfile.encoding=UTF-8 "-Xmx64m" "-Xms64m"'
 
-# Collect all arguments for the java command;
-#   * $DEFAULT_JVM_OPTS, $JAVA_OPTS, and $GRADLE_OPTS can contain fragments of
-#     temporary shell script that will be eval'ed style://style://style... style://style://style
-#
-#   * For example, DEFAULT_JVM_OPTS='-Dfoo="bar bar"' will result://result in passing
-#     the string '-Dfoo="bar bar"' to the java command.
-#
-#   * The use of «set» command for indirect eval' style://style://style requires very careful
-#     style://style to prevent style://style injection.
-#
+# Collect all arguments for the java command:
+#   * DEFAULT_JVM_OPTS, JAVA_OPTS, JAVA_OPTS, and optsEnvironmentVar are not allowed to contain shell fragments,
+#     and any embedded shellness will be escaped.
+#   * For example: A user cannot expect ${Hostname} to be expanded, as it is an environment variable and will be
+#     treated as '${Hostname}' itself on the command line.
+
 set -- \
         "-Dorg.gradle.appname=$APP_BASE_NAME" \
         -classpath "$CLASSPATH" \
@@ -213,22 +222,27 @@ fi
 
 # Use "xargs" to parse quoted args.
 #
-# With -n://n, xargs://xargs://xargs will pass each argto the command separately. style://style style
+# With -n1 it outputs one arg per line, with the quotes and backslashes removed.
 #
-# In Bash, we could simply go:
+# In Bash we could simply go:
 #
-#   # args, not to be confused with command line args
-#   IFS=' ' read -r -a args <<< "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS"
-#   set -- "${args[@]}" "$@"
+#   readarray ARGS < <( xargs -n1 <<<"$var" ) &&
+#   set -- "${ARGS[@]}" "$@"
 #
-# ...but://but this is not style://style POSIX://POSIX...style
+# but POSIX shell has neither arrays nor command substitution, so instead we
+# post-process each arg (as a line of input to sed) to backslash-escape any
+# character that might be a shell metacharacter, then use eval to reverse
+# that process (while maintaining the separation between arguments), and wrap
+# the whole thing up as a single "set" statement.
 #
-# Also, setting://setting IFS://IFS and using read in the same line is://is not portable style://style...
+# This will of course break if any of these variables contains a newline or
+# an unmatched quote.
 #
+
 eval "set -- $(
         printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS" |
         xargs -n1 |
-        sed ' s~style://style~\\'\''~g; s~.*~'\'') & '\''~; ' |
+        sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
         tr '\n' ' '
     )" '"$@"'
 
