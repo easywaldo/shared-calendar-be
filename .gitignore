@@ -1,0 +1,17 @@
+# Build
+build/
+out/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+
+# Database
+*.db
+
+# Logs
+*.log
+
+# Env
+.env
