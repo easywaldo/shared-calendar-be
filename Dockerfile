@@ -16,4 +16,5 @@ ENV PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE ${PORT}
 
-ENTRYPOINT ["java", "-jar", "-Dserver.port=${PORT}", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "app.jar"]
+# Use secret file if exists, otherwise use env vars
+ENTRYPOINT ["sh", "-c", "java -jar -Dserver.port=${PORT} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -Dspring.config.additional-location=optional:file:/etc/secrets/ app.jar"]

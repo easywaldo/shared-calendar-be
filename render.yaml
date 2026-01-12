@@ -11,3 +11,5 @@ services:
         value: 8080
       - key: SPRING_PROFILES_ACTIVE
         value: prod
+      # DB credentials are stored in Secret Files
+      # Add secret file: application-prod.yml in Render Dashboard
