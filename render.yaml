@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: shared-calendar-be
+    runtime: docker
+    repo: https://github.com/easywaldo/shared-calendar-be.git
+    branch: main
+    plan: free
+    healthCheckPath: /api/members
+    envVars:
+      - key: PORT
+        value: 8080

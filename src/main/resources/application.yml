@@ -12,7 +12,7 @@ spring:
         format_sql: true
 
 server:
-  port: 8099
+  port: ${PORT:8099}
 
 # Turso 연동 정보 (향후 배포 시 사용)
 turso:
