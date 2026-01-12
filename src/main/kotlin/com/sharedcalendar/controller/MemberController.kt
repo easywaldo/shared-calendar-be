@@ -15,6 +15,11 @@ class MemberController(
     private val memberService: MemberService
 ) {
 
+    @GetMapping("/health")
+    fun health(): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("status" to "ok"))
+    }
+
     @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request: SignUpRequest): ResponseEntity<SignUpResponse> {
         val response = memberService.signUp(request)

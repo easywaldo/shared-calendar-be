@@ -19,7 +19,6 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -32,10 +31,10 @@ dependencies {
     // SQLite JDBC Driver (for local dev)
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 
-    // Turso libSQL JDBC Driver (for prod)
-    implementation("com.github.nicepay:libsql-jdbc:0.1.4")
+    // PostgreSQL JDBC Driver (for prod)
+    implementation("org.postgresql:postgresql:42.7.1")
 
-    // Hibernate SQLite Dialect
+    // Hibernate SQLite Dialect (for local dev)
     implementation("org.hibernate.orm:hibernate-community-dialects:6.4.2.Final")
 
     // Password encoding

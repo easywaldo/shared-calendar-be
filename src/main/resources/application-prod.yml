@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:libsql:${TURSO_DATABASE_URL}?authToken=${TURSO_AUTH_TOKEN}
-    driver-class-name: org.nicepay.libsql.LibsqlDriver
+    url: ${DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: false
